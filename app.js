@@ -2,7 +2,7 @@
 // CONFIG: Switch this to your Render URL once deployed
 // e.g. "https://rotor-api.onrender.com"
 // ============================================================================
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://rotor-backend.onrender.com";
 
 let bikesCache = [];
 let zonesCache = [];
