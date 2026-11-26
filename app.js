@@ -1,6 +1,5 @@
 // ============================================================================
-// CONFIG: Switch this to your Render URL once deployed
-// e.g. "https://rotor-api.onrender.com"
+// CONFIG: Live Render Backend API URL
 // ============================================================================
 const API_BASE_URL = "https://rotor-backend.onrender.com";
 
@@ -143,7 +142,12 @@ function selectShippingZone(zoneId) {
 
 function populateShippingZones() {
   const menu = document.getElementById("zoneMenu");
-  if (!zonesCache.length) return;
+  if (!zonesCache.length) {
+    document.getElementById("shippingZoneSelect").value = "";
+    document.getElementById("zoneTriggerText").textContent = "No shipping zones available";
+    menu.innerHTML = `<div class="cs-option" style="pointer-events:none;opacity:.6;">No active shipping zones</div>`;
+    return;
+  }
 
   menu.innerHTML = zonesCache
     .map(
@@ -233,6 +237,12 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
   e.preventDefault();
   if (!selectedBike) return;
 
+  const zoneId = document.getElementById("shippingZoneSelect").value;
+  if (!zoneId) {
+    showToast("Please select a shipping zone first.", "error");
+    return;
+  }
+
   const btn = document.getElementById("proceedPayBtn");
   const originalText = btn.innerHTML;
   btn.disabled = true;
@@ -243,7 +253,7 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
 
   const payload = {
     bike_id: selectedBike.id,
-    shipping_zone_id: document.getElementById("shippingZoneSelect").value,
+    shipping_zone_id: zoneId,
     customer_name: document.getElementById("custName").value.trim(),
     customer_email: document.getElementById("custEmail").value.trim(),
     customer_phone: document.getElementById("custPhone").value.trim(),
@@ -336,7 +346,7 @@ function checkReturnParams() {
     document.getElementById("trackRef").value = orderRef;
     openModal("trackModal");
   } else if (orderRef && status === "cancelled") {
-    showToast(`Payment for ${orderRef} was cancelled. The bike lock will release automatically.`, "error");
+    showToast(`Payment for ${orderRef} was cancelled. You can try again anytime.`, "error");
   }
 }
 
